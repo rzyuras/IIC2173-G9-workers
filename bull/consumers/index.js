@@ -16,6 +16,8 @@ const worker = new Worker('flights recommendation', async (job) => {
   } = job.data;
   const sameDepartureFlightsUrl = `https://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
 
+  console.log("vuelo", lastFlight);
+
   try {
     const responseFetch = await fetch(sameDepartureFlightsUrl);
     const response = await responseFetch.json();
