@@ -14,7 +14,11 @@ const worker = new Worker('flights recommendation', async (job) => {
   const {
     userId, latitudeIp, longitudeIp, lastFlight,
   } = job.data;
+
+  console.log('Worker received data:', job.data); // Log de los datos recibidos
+
   const sameDepartureFlightsUrl = `https://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
+
 
   try {
     const responseFetch = await fetch(sameDepartureFlightsUrl);
