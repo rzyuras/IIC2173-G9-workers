@@ -1,9 +1,9 @@
 services:
   api:
     build:
-      context: ./api-maestro
+      context: ./api
       dockerfile: Dockerfile
-    container_name: api-maestro
+    container_name: api
     restart: unless-stopped
     ports:
       - "3000:3000"

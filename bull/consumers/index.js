@@ -14,15 +14,15 @@ const worker = new Worker('flights recommendation', async (job) => {
   const {
     userId, latitudeIp, longitudeIp, lastFlight,
   } = job.data;
-  const sameDepartureFlightsUrl = `http://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
+  const sameDepartureFlightsUrl = `https://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
 
   try {
-    const response = await fetch(sameDepartureFlightsUrl);
-    if (!response.data) {
+    const responseFetch = await fetch(sameDepartureFlightsUrl);
+    const response = await responseFetch.json();
+    if (!response.flights) {
       throw new Error('No data found');
     } else {
-      const sameDepartureFlights = response.data.flights;
-      console.log('Fetched same departure flights:', sameDepartureFlights.length);
+      const sameDepartureFlights = response.flights;
 
       // Paso 2: Obtener los últimos 20 vuelos que salgan dentro de la semana después de la compra
       const lastFlights = sameDepartureFlights.filter((flight) => {
@@ -32,19 +32,16 @@ const worker = new Worker('flights recommendation', async (job) => {
 
         return lastArrivalTime < flightDepartureTime && timeDiffInDays <= 7;
       }).slice(0, 20); // Revisar
-      console.log('Filtered last flights:', lastFlights.length);
 
       // Paso 3: Obtener las coordenadas de los aeropuertos de destino de los últimos 20 vuelos
       const flightCoordinatesPromises = lastFlights.map(async (flight) => {
-        const geoCodeUrl = `https://geocode.maps.co/search?q=${encodeURIComponent(flight.arrival_airport_name)}&api_key=${process.env.GEOCODE_API_KEY}`;
-        console.log('geocode:', geoCodeUrl);
+        const geoCodeUrl = `https://geocode.maps.co/search?q=Airport%20${encodeURIComponent(flight.arrival_airport_id)}&api_key=${process.env.GEOCODE_API_KEY}`;
         const geoResponse = await fetch(geoCodeUrl);
         const location = await geoResponse.json();
         return { ...flight, latitude: location[0].lat, longitude: location[0].lon };
       });
 
       const flightsWithCoordinates = await Promise.all(flightCoordinatesPromises);
-      console.log('Got coordinates for flights:', flightsWithCoordinates.length);
 
       // Paso 4: Calcular la distancia y ordenar según el precio y distancia
       const toRadians = (degrees) => degrees * (Math.PI / 180);
@@ -64,11 +61,9 @@ const worker = new Worker('flights recommendation', async (job) => {
         const pond = distance / flight.price;
         return { ...flight, distance, pond };
       });
-      console.log('Calculated ponder for flights:', flightsWithPonder.length);
 
       // Paso 5: Ordenar y obtener las 3 mejores recomendaciones
       const top3Flights = flightsWithPonder.sort((a, b) => a.pond - b.pond).slice(0, 3);
-      console.log('Top 3 flights:', top3Flights);
 
       return top3Flights;
     }
