@@ -24,8 +24,13 @@ app.use(cors(corsOptions));
 
 
 app.post('/job', (req, res) => {
-  res.send({ status: `Job created: ${req.body}` });
-  console.log("body:", JSON.stringify(req.body))
+  const requestBody = req.body;
+
+  // Enviar la respuesta con el cuerpo convertido a JSON
+  res.send({ status: `Job created: ${requestBody}` });
+
+  // Imprimir el cuerpo de la solicitud en el servidor
+  console.log("body:", requestBody);
 });
 
 app.get('/job/:id', getJobStatus);
