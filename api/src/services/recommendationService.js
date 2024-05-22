@@ -1,7 +1,6 @@
 const flightsQueue = require('../queues/flightQueue');
 
 exports.produceRecommendation = async (req, res) => {
-  console.log("body:", req.body)
   try {
     await flightsQueue.add('flights recommendation', {
       userId: req.body.userId, 
