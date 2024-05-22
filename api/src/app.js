@@ -23,7 +23,10 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 
-app.post('/job', produceRecommendation);
+app.post('/job', (req, res) => {
+  res.send({ status: `Job created: ${req.body}` });
+  console.log("body:", req.body)
+});
 
 app.get('/job/:id', getJobStatus);
 
