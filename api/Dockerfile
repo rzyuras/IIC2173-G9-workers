@@ -1,7 +1,7 @@
 FROM node:18-slim
 
 # Establece el directorio de trabajo en /app
-WORKDIR /app
+WORKDIR /api
 
 # Copia los archivos del proyecto al contenedor
 COPY . .
@@ -10,14 +10,10 @@ COPY . .
 RUN npm install
 
 # Expone el puerto que la aplicación usa
-EXPOSE 3003
+EXPOSE 3000
 
 # Define variables de entorno
 ENV NODE_ENV=production
 
-# Agrega el script de espera
-ADD https://github.com/vishnubob/wait-for-it/raw/master/wait-for-it.sh /usr/wait-for-it.sh
-RUN chmod +x /usr/wait-for-it.sh
-
 # Comando para iniciar la aplicación
-CMD ["/usr/wait-for-it.sh", "redis:6379", "--strict", "--timeout=30", "--", "node", "src/app.js"]
+CMD ["node", "src/app.js"]

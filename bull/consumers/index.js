@@ -14,10 +14,10 @@ const worker = new Worker('flights recommendation', async (job) => {
   const {
     userId, latitudeIp, longitudeIp, lastFlight,
   } = job.data;
-  const sameDepartureFlightsUrl = `http://app:3000/flights?departure=${lastFlight.arrival_airport_id}`;
+  const sameDepartureFlightsUrl = `http://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
 
   try {
-    const response = await axios.get(sameDepartureFlightsUrl);
+    const response = await fetch(sameDepartureFlightsUrl);
     if (!response.data) {
       throw new Error('No data found');
     } else {

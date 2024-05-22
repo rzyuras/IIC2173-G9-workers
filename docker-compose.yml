@@ -1,13 +1,12 @@
-version: '3.8'
 services:
-  api-maestro:
+  api:
     build:
       context: ./api-maestro
       dockerfile: Dockerfile
     container_name: api-maestro
     restart: unless-stopped
     ports:
-      - "3003:3003"
+      - "3000:3000"
     networks:
       - app-network
     depends_on:
@@ -49,6 +48,7 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ${REDIS_PASSWORD}
       GEOCODE_API_KEY: ${GEOCODE_API_KEY}
+      URL_API: ${URL_API}
 
   redis:
     image: redis:alpine

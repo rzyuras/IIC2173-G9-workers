@@ -1,9 +1,14 @@
 const flightsQueue = require('../queues/flightQueue');
 
-exports.createJob = async (req, res) => {
+exports.produceRecommendation = async (req, res) => {
   try {
-    const job = await flightsQueue.add('flightTask', req.body);
-    res.status(201).send({ jobId: job.id });
+    await flightsQueue.add('flights recommendation', {
+      userId: req.body.userId, 
+      latitudeId: req.body.latitudeIp,
+      longitudeIp: req.body.longitudeIp,
+      lastFlight: req.body.lastFlight,
+    });
+    res.status(201).send(`Added recommendation job for user ${userId}`);
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
