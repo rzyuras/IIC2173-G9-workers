@@ -15,7 +15,7 @@ const worker = new Worker('flights recommendation', async (job) => {
     userId, latitudeIp, longitudeIp, lastFlight,
   } = job.data;
 
-  job.log(`Worker received data: ${job.data}`); // Log de los datos recibidos
+  job.log(`Worker received data: ${JSON.stringify(job.data)}`); // Log de los datos recibidos
 
   const sameDepartureFlightsUrl = `https://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
 
@@ -42,8 +42,8 @@ const worker = new Worker('flights recommendation', async (job) => {
         const geoCodeUrl = `https://geocode.maps.co/search?q=Airport%20${encodeURIComponent(flight.arrival_airport_id)}&api_key=${process.env.GEOCODE_API_KEY}`;
         const geoResponse = await fetch(geoCodeUrl);
         const location = await geoResponse.json();
-        job.log(`geoCodeUrl: ${geoCodeUrl}`);
-        job.log(`location: ${location} and location[0]: ${location[0]}`);
+        job.log(`geoCodeUrl: ${JSON.stringify(geoCodeUrl)}`);
+        job.log(`location: ${JSON.stringify(location)} and location[0]: ${JSON.stringify(location[0])}`);
         return { ...flight, latitude: location[0].lat, longitude: location[0].lon }; //aquiiiiii
       });
 
@@ -81,7 +81,7 @@ const worker = new Worker('flights recommendation', async (job) => {
 
 // Callback on completed jobs
 worker.on('completed', (job, returnvalue) => {
-  job.log(`Worker completed job ${job.id} with result ${returnvalue}`);
+  job.log(`Worker completed job ${job.id} with result ${JSON.stringify(returnvalue)}`);
 });
 
 // Callback on failed jobs
