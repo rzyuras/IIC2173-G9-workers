@@ -43,8 +43,11 @@ const worker = new Worker('flights recommendation', async (job) => {
         const geoResponse = await fetch(geoCodeUrl);
         const location = await geoResponse.json();
         job.log(`geoCodeUrl: ${JSON.stringify(geoCodeUrl)}`);
-        job.log(`location: ${JSON.stringify(location)} and location[0]: ${JSON.stringify(location[0])}`);
-        return { ...flight, latitude: location[0].lat, longitude: location[0].lon }; //aquiiiiii
+        if (location && location[0] && location[0].lat && location[0].lon) {
+          return { ...flight, latitude: location[0].lat, longitude: location[0].lon };
+        } else {
+          job.log(`Location not found for airport ${flight.arrival_airport_id}`);
+        }
       });
 
       const flightsWithCoordinates = await Promise.all(flightCoordinatesPromises);
