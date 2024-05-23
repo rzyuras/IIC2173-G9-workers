@@ -23,6 +23,7 @@ const worker = new Worker('flights recommendation', async (job) => {
   try {
     const responseFetch = await fetch(sameDepartureFlightsUrl);
     const response = await responseFetch.json();
+    job.log(`response: ${JSON.stringify(response)}`); // Log de la respuesta
     if (!response.flights) {
       throw new Error('No data found');
     } else {
@@ -43,7 +44,7 @@ const worker = new Worker('flights recommendation', async (job) => {
         const geoResponse = await fetch(geoCodeUrl);
         const location = await geoResponse.json();
         job.log(`geoCodeUrl: ${JSON.stringify(geoCodeUrl)}`);
-        console.log(`location: ${location}`);
+        job.log(`location: ${location}`);
         if (location.length >= 1) {
           return { ...flight, latitude: location[0].lat, longitude: location[0].lon };
         } else {
