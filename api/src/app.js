@@ -27,6 +27,7 @@ app.post('/job', produceRecommendation);
 
 app.get('/job/:id', getJobStatus);
 
+/// https://worker.matiasoliva.me/heartbeat
 app.get('/heartbeat', (req, res) => {
   res.send({status: true});
 });
