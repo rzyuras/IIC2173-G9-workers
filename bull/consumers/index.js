@@ -18,6 +18,7 @@ const worker = new Worker('flights recommendation', async (job) => {
   job.log(`Worker received data: ${JSON.stringify(job.data)}`); // Log de los datos recibidos
 
   const sameDepartureFlightsUrl = `https://${process.env.URL_API}/flights?departure=${lastFlight.arrival_airport_id}`;
+  job.log(`sameDepartureFlightsUrl: ${sameDepartureFlightsUrl}`); // Log de la URL
 
 
   try {
