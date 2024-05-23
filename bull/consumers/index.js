@@ -44,7 +44,7 @@ const worker = new Worker('flights recommendation', async (job) => {
         const location = await geoResponse.json();
         job.log(`geoCodeUrl: ${JSON.stringify(geoCodeUrl)}`);
         console.log(`location: ${location}`);
-        if (location.length >= 3) {
+        if (location.length >= 1) {
           return { ...flight, latitude: location[0].lat, longitude: location[0].lon };
         } else {
           job.log(`Location not found for airport ${flight.arrival_airport_id}`);
