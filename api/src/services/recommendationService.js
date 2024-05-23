@@ -10,7 +10,7 @@ exports.produceRecommendation = async (req, res) => {
     });
 
     const completedJob = await job.waitUntilFinished(flightQueueEvents);
-    console.log(`The recommendation are ${completedJob}`);
+    console.log(`The recommendation are ${JSON.stringify(completedJob)}`);
     res.status(201).send(JSON.stringify(completedJob));
   } catch (error) {
     res.status(500).send({ error: error.message });
