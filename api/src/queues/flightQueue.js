@@ -1,5 +1,5 @@
 require('dotenv').config({ path: '../../../.env' });
-const { Queue } = require('bullmq');
+const { Queue, QueueEvents } = require('bullmq');
 
 const flightQueueConfig = {
   connection: {
@@ -14,5 +14,6 @@ const flightQueueConfig = {
 };
 
 const flightsQueue = new Queue('flights recommendation', flightQueueConfig);
+const flightQueueEvents = new QueueEvents('flights recommendation', flightQueueConfig);
 
-module.exports = flightsQueue;
+module.exports = { flightsQueue, flightQueueEvents };
