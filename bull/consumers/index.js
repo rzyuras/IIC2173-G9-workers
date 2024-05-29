@@ -43,17 +43,33 @@ const worker = new Worker('flights recommendation', async (job) => {
       const flightCoordinatesPromises = lastFlights.map(async (flight) => {
         const geoCodeUrl = `https://geocode.maps.co/search?q=Airport%20${encodeURIComponent(flight.arrival_airport_id)}&api_key=${process.env.GEOCODE_API_KEY}`;
         const geoResponse = await fetch(geoCodeUrl);
+        
+        if (!geoResponse.ok) {
+          job.log(`Failed to fetch geocode for airport ${flight.arrival_airport_id}: ${geoResponse.statusText}`);
+          return null;
+        }
+    
+        const contentType = geoResponse.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          job.log(`Invalid content type for airport ${flight.arrival_airport_id}: ${contentType}`);
+          return null;
+        }
+    
         const location = await geoResponse.json();
         job.log(`geoCodeUrl: ${JSON.stringify(geoCodeUrl)}`);
-        job.log(`location: ${location}`);
-        if (location.length >= 1) {
+        job.log(`location: ${JSON.stringify(location)}`);
+
+        if (location?.[0]?.lat && location?.[0]?.lon) {
           return { ...flight, latitude: location[0].lat, longitude: location[0].lon };
         } else {
           job.log(`Location not found for airport ${flight.arrival_airport_id}`);
+          return null
         }
       });
 
-      const flightsWithCoordinates = await Promise.all(flightCoordinatesPromises);
+      const result = await Promise.all(flightCoordinatesPromises);
+      const flightsWithCoordinates = result.filter((flight) => flight !== null);
+      console.log("flightsWithCoordinates", flightsWithCoordinates)
 
       // Paso 4: Calcular la distancia y ordenar según el precio y distancia
       const toRadians = (degrees) => degrees * (Math.PI / 180);

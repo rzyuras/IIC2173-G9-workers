@@ -8,7 +8,6 @@ exports.produceRecommendation = async (req, res) => {
       longitudeIp: req.body.longitudeIp,
       lastFlight: req.body.lastFlight,
     });
-
     const completedJob = await job.waitUntilFinished(flightQueueEvents);
     res.status(201).send(JSON.stringify(completedJob));
   } catch (error) {
