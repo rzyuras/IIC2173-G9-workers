@@ -25,3 +25,8 @@ docker volume rm $(docker volume ls -q)
 docker system prune -a --volumes
 ```
 
+### Parar Redis
+
+```bash
+sudo systemctl stop redis
+```
